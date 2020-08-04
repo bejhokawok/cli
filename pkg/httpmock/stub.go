@@ -43,27 +43,7 @@ func GraphQL(q string) Matcher {
 		if !strings.EqualFold(req.Method, "POST") {
 			return false
 		}
-		if req.URL.Path != "/graphql" {
-			return false
-		}
-
-		var bodyData struct {
-			Query string
-		}
-		_ = decodeJSONBody(req, &bodyData)
-
-		return re.MatchString(bodyData.Query)
-	}
-}
-
-func EnterpriseGraphQL(q string) Matcher {
-	re := regexp.MustCompile(q)
-
-	return func(req *http.Request) bool {
-		if !strings.EqualFold(req.Method, "POST") {
-			return false
-		}
-		if req.URL.Path != "/api/graphql" {
+		if req.URL.Path != "/graphql" && req.URL.Path != "/api/graphql" {
 			return false
 		}
 

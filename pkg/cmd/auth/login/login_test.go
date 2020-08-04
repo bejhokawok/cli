@@ -328,7 +328,7 @@ func Test_loginRun_Survey(t *testing.T) {
 			httpStubs: func(reg *httpmock.Registry) {
 				reg.Register(httpmock.REST("GET", "api/v3/"), scopesResponder("repo,read:org,"))
 				reg.Register(
-					httpmock.EnterpriseGraphQL(`query UserCurrent\b`),
+					httpmock.GraphQL(`query UserCurrent\b`),
 					httpmock.StringResponse(`{"data":{"viewer":{"login":"jillv"}}}`))
 			},
 		},
@@ -345,7 +345,7 @@ func Test_loginRun_Survey(t *testing.T) {
 			httpStubs: func(reg *httpmock.Registry) {
 				reg.Register(httpmock.REST("GET", "api/v3/"), scopesResponder("repo,read:org,"))
 				reg.Register(
-					httpmock.EnterpriseGraphQL(`query UserCurrent\b`),
+					httpmock.GraphQL(`query UserCurrent\b`),
 					httpmock.StringResponse(`{"data":{"viewer":{"login":"jillv"}}}`))
 			},
 		},
