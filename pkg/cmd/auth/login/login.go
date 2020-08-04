@@ -64,7 +64,7 @@ func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Comm
 			ghToken := os.Getenv("GITHUB_TOKEN")
 
 			if !isTTY && (!cmd.Flags().Changed("with-token") && ghToken == "") {
-				return &cmdutil.FlagError{Err: errors.New("--with-token required when not attached to tty")}
+				return &cmdutil.FlagError{Err: errors.New("no terminal detected; please use '--with-token' or set GITHUB_TOKEN")}
 			}
 
 			wt, _ := cmd.Flags().GetBool("with-token")
@@ -126,12 +126,6 @@ func loginRun(opts *LoginOptions) error {
 		}
 
 		return cfg.Write()
-	}
-
-	isTTY := opts.IO.IsStdoutTTY() && opts.IO.IsStdinTTY()
-
-	if !isTTY {
-		return errors.New("token must be passed via STDIN and --with-token when unattached to TTY")
 	}
 
 	// TODO consider explicitly telling survey what io to use since it's implicit right now

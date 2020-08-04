@@ -184,11 +184,6 @@ func Test_loginRun_nontty(t *testing.T) {
 		wantErr   *regexp.Regexp
 	}{
 		{
-			name:    "no arguments",
-			opts:    &LoginOptions{},
-			wantErr: regexp.MustCompile(`when unattached to TTY`),
-		},
-		{
 			name: "with token",
 			opts: &LoginOptions{
 				Hostname: "github.com",
