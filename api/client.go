@@ -224,9 +224,9 @@ func (c Client) HasMinimumScopes(hostname string) (bool, error) {
 	hasScopes := strings.Split(res.Header.Get("X-Oauth-Scopes"), ",")
 
 	search := map[string]bool{
-		"repo":       false,
-		"read:org":   false,
-		"admin:read": false,
+		"repo":      false,
+		"read:org":  false,
+		"admin:org": false,
 	}
 
 	for _, s := range hasScopes {
@@ -235,11 +235,11 @@ func (c Client) HasMinimumScopes(hostname string) (bool, error) {
 
 	errorMsgs := []string{}
 	if !search["repo"] {
-		errorMsgs = append(errorMsgs, "missing required scope repo")
+		errorMsgs = append(errorMsgs, "missing required scope 'repo'")
 	}
 
-	if !search["read:org"] && !search["admin:read"] {
-		errorMsgs = append(errorMsgs, "missing a read scope (need one of read:org or admin:read)")
+	if !search["read:org"] && !search["admin:org"] {
+		errorMsgs = append(errorMsgs, "missing required scope 'read:org'")
 	}
 
 	if len(errorMsgs) > 0 {

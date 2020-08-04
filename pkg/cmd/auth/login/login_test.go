@@ -201,7 +201,7 @@ func Test_loginRun_nontty(t *testing.T) {
 				Token:    "abc456",
 			},
 			httpStubs: func(reg *httpmock.Registry) {
-				reg.Register(httpmock.REST("GET", ""), scopesResponder("repo,admin:read"))
+				reg.Register(httpmock.REST("GET", ""), scopesResponder("repo,admin:org"))
 			},
 			wantHosts: "github.com:\n    oauth_token: abc456\n",
 		},
