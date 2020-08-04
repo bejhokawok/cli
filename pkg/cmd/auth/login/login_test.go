@@ -216,7 +216,7 @@ func Test_loginRun_nontty(t *testing.T) {
 			httpStubs: func(reg *httpmock.Registry) {
 				reg.Register(httpmock.REST("GET", ""), scopesResponder("read:org"))
 			},
-			wantErr: regexp.MustCompile(`missing required scope repo`),
+			wantErr: regexp.MustCompile(`missing required scope 'repo'`),
 		},
 		{
 			name: "missing read scope",
@@ -227,7 +227,7 @@ func Test_loginRun_nontty(t *testing.T) {
 			httpStubs: func(reg *httpmock.Registry) {
 				reg.Register(httpmock.REST("GET", ""), scopesResponder("repo"))
 			},
-			wantErr: regexp.MustCompile(`missing a read scope`),
+			wantErr: regexp.MustCompile(`missing required scope 'read:org'`),
 		},
 		{
 			name: "has admin scope",
