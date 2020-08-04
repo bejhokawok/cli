@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"regexp"
 	"testing"
 
@@ -25,6 +26,7 @@ func Test_NewCmdLogin(t *testing.T) {
 		stdinTTY bool
 		wants    LoginOptions
 		wantsErr bool
+		ghtoken  string
 	}{
 		{
 			name:  "nontty, with-token",
@@ -38,8 +40,12 @@ func Test_NewCmdLogin(t *testing.T) {
 		{
 			name:     "tty, with-token",
 			stdinTTY: true,
-			wantsErr: true,
+			stdin:    "def456",
 			cli:      "--with-token",
+			wants: LoginOptions{
+				Hostname: "github.com",
+				Token:    "def456",
+			},
 		},
 		{
 			name:     "nontty, hostname",
@@ -63,8 +69,12 @@ func Test_NewCmdLogin(t *testing.T) {
 		{
 			name:     "tty, with-token, hostname",
 			stdinTTY: true,
-			wantsErr: true,
-			cli:      "--with-token",
+			stdin:    "ghi789",
+			cli:      "--with-token --hostname brad.vickers",
+			wants: LoginOptions{
+				Hostname: "brad.vickers",
+				Token:    "ghi789",
+			},
 		},
 		{
 			name:     "tty, hostname",
@@ -84,10 +94,35 @@ func Test_NewCmdLogin(t *testing.T) {
 				Token:    "",
 			},
 		},
+		{
+			name:     "tty, GITHUB_TOKEN",
+			stdinTTY: true,
+			cli:      "",
+			ghtoken:  "abc123",
+			wants: LoginOptions{
+				Hostname: "github.com",
+				Token:    "abc123",
+			},
+		},
+		{
+			name:     "nontty, GITHUB_TOKEN",
+			stdinTTY: false,
+			cli:      "",
+			ghtoken:  "abc123",
+			wants: LoginOptions{
+				Hostname: "github.com",
+				Token:    "abc123",
+			},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			ghtoken := os.Getenv("GITHUB_TOKEN")
+			defer func() {
+				os.Setenv("GITHUB_TOKEN", ghtoken)
+			}()
+			os.Setenv("GITHUB_TOKEN", tt.ghtoken)
 			io, stdin, _, _ := iostreams.Test()
 			f := &cmdutil.Factory{
 				IOStreams: io,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -59,15 +60,15 @@ func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Comm
 		RunE: func(cmd *cobra.Command, args []string) error {
 			isTTY := opts.IO.IsStdinTTY()
 
-			if !isTTY && !cmd.Flags().Changed("with-token") {
+			// TODO support other ways of naming
+			ghToken := os.Getenv("GITHUB_TOKEN")
+
+			if !isTTY && (!cmd.Flags().Changed("with-token") && ghToken == "") {
 				return &cmdutil.FlagError{Err: errors.New("--with-token required when not attached to tty")}
 			}
 
 			wt, _ := cmd.Flags().GetBool("with-token")
 			if wt {
-				if isTTY {
-					return &cmdutil.FlagError{Err: errors.New("expected token on STDIN")}
-				}
 				defer opts.IO.In.Close()
 				token, err := ioutil.ReadAll(opts.IO.In)
 				if err != nil {
@@ -75,6 +76,12 @@ func NewCmdLogin(f *cmdutil.Factory, runF func(*LoginOptions) error) *cobra.Comm
 				}
 
 				opts.Token = strings.TrimSpace(string(token))
+			} else if ghToken != "" {
+				opts.Token = ghToken
+			}
+
+			if opts.Token != "" {
+				// Assume non-interactive if a token is specified
 				if opts.Hostname == "" {
 					opts.Hostname = ghinstance.Default()
 				}
