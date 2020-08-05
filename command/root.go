@@ -23,6 +23,7 @@ import (
 	apiCmd "github.com/cli/cli/pkg/cmd/api"
 	authCmd "github.com/cli/cli/pkg/cmd/auth"
 	authLoginCmd "github.com/cli/cli/pkg/cmd/auth/login"
+	authLogoutCmd "github.com/cli/cli/pkg/cmd/auth/logout"
 	gistCreateCmd "github.com/cli/cli/pkg/cmd/gist/create"
 	repoCmd "github.com/cli/cli/pkg/cmd/repo"
 	repoCloneCmd "github.com/cli/cli/pkg/cmd/repo/clone"
@@ -127,6 +128,7 @@ func init() {
 
 	RootCmd.AddCommand(authCmd.Cmd)
 	authCmd.Cmd.AddCommand(authLoginCmd.NewCmdLogin(cmdFactory, nil))
+	authCmd.Cmd.AddCommand(authLogoutCmd.NewCmdLogout(cmdFactory, nil))
 
 	resolvedBaseRepo := func() (ghrepo.Interface, error) {
 		httpClient, err := cmdFactory.HttpClient()
